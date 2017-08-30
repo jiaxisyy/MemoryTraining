@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="25dp"
+    android:layout_marginLeft="10dp"
+    android:gravity="center">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_btn_select"
+        android:gravity="center"
+        android:textColor="#86DB72">
+
+        <TextView
+            android:id="@+id/tv_item_Num1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="01"
+            android:textColor="#86DB72" />
+
+        <ImageView
+            android:id="@+id/iv_item_rightOrError1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/iv_btn_error"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+</LinearLayout>
