@@ -34,7 +34,7 @@ import butterknife.OnLongClick;
 
 public class MainActivity extends Activity {
 
-    private static final int MAXNUM = 10;
+    private static final int MAXNUM = 20;
     private static final int CLICK_NO = 0;
     private static final int CLICK_RIGHT = 1;
     private static final int CLICK_ERROR = -1;
@@ -160,46 +160,50 @@ public class MainActivity extends Activity {
      * 显示关卡数
      */
     private void showCustoms() {
-
         int customs_num = CacheUtils.getInt(MainActivity.this, "customs_num", 1);//获取保存关卡
-        if (customs_num == 11) {
+        if (customs_num == 21) {
             CustomToast.showToast(this, "恭喜你已通关,游戏重置", Toast.LENGTH_SHORT);
             reset();
         }
-
-        switch (customs_num) {
-            case 1:
-                tvCustomsNum.setText("第一关");
-                break;
-            case 2:
-                tvCustomsNum.setText("第二关");
-                break;
-            case 3:
-                tvCustomsNum.setText("第三关");
-                break;
-            case 4:
-                tvCustomsNum.setText("第四关");
-                break;
-            case 5:
-                tvCustomsNum.setText("第五关");
-                break;
-            case 6:
-                tvCustomsNum.setText("第六关");
-                break;
-            case 7:
-                tvCustomsNum.setText("第七关");
-                break;
-            case 8:
-                tvCustomsNum.setText("第八关");
-                break;
-            case 9:
-                tvCustomsNum.setText("第九关");
-                break;
-            case 10:
-                tvCustomsNum.setText("第十关");
-                break;
+        if (customs_num <= 10) {
+            tvCustomsNum.setText("第一关");
+        } else if (customs_num > 10 && customs_num <= 15) {
+            tvCustomsNum.setText("第二关");
+        } else if (customs_num > 15 && customs_num <= 20) {
+            tvCustomsNum.setText("第三关");
         }
-
+//        switch (customs_num) {
+//            case 1:
+//                tvCustomsNum.setText("第一关");
+//                break;
+//            case 2:
+//                tvCustomsNum.setText("第二关");
+//                break;
+//            case 3:
+//                tvCustomsNum.setText("第三关");
+//                break;
+//            case 4:
+//                tvCustomsNum.setText("第四关");
+//                break;
+//            case 5:
+//                tvCustomsNum.setText("第五关");
+//                break;
+//            case 6:
+//                tvCustomsNum.setText("第六关");
+//                break;
+//            case 7:
+//                tvCustomsNum.setText("第七关");
+//                break;
+//            case 8:
+//                tvCustomsNum.setText("第八关");
+//                break;
+//            case 9:
+//                tvCustomsNum.setText("第九关");
+//                break;
+//            case 10:
+//                tvCustomsNum.setText("第十关");
+//                break;
+//        }
         showDialogCustoms(customs_num);
     }
 
@@ -230,58 +234,69 @@ public class MainActivity extends Activity {
      * 显示关卡弹窗
      */
     private void showDialogCustoms(int customsNnum) {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_customs, null, false);
-        final Dialog dialog = new Dialog(this, R.style.input_dialog);
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.setContentView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
-        TextView tvNum = (TextView) view.findViewById(R.id.tv_dialog_customsNum);
-        switch (customsNnum) {
-            case 1:
-                tvNum.setText("第一关");
-                break;
-            case 2:
-                tvNum.setText("第二关");
-                break;
-            case 3:
-                tvNum.setText("第三关");
-                break;
-            case 4:
-                tvNum.setText("第四关");
-                break;
-            case 5:
-                tvNum.setText("第五关");
-                break;
-            case 6:
-                tvNum.setText("第六关");
-                break;
-            case 7:
-                tvNum.setText("第七关");
-                break;
-            case 8:
-                tvNum.setText("第八关");
-                break;
-            case 9:
-                tvNum.setText("第九关");
-                break;
-            case 10:
-                tvNum.setText("第十关");
-                break;
-        }
-        dialog.show();
+        if (customsNnum == 1 || customsNnum == 11 || customsNnum == 16) {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(DELAYED);
-                    dialog.dismiss();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+            View view = LayoutInflater.from(this).inflate(R.layout.dialog_customs, null, false);
+            final Dialog dialog = new Dialog(this, R.style.input_dialog);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(true);
+            dialog.setContentView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+            TextView tvNum = (TextView) view.findViewById(R.id.tv_dialog_customsNum);
+            if (customsNnum <= 10) {
+                tvNum.setText("第一关");
+            } else if (customsNnum > 10 && customsNnum <= 15) {
+                tvNum.setText("第二关");
+            } else if (customsNnum > 15 && customsNnum <= 20) {
+                tvNum.setText("第三关");
             }
-        }).start();
+//        switch (customsNnum) {
+//            case 1:
+//                tvNum.setText("第一关");
+//                break;
+//            case 2:
+//                tvNum.setText("第二关");
+//                break;
+//            case 3:
+//                tvNum.setText("第三关");
+//                break;
+//            case 4:
+//                tvNum.setText("第四关");
+//                break;
+//            case 5:
+//                tvNum.setText("第五关");
+//                break;
+//            case 6:
+//                tvNum.setText("第六关");
+//                break;
+//            case 7:
+//                tvNum.setText("第七关");
+//                break;
+//            case 8:
+//                tvNum.setText("第八关");
+//                break;
+//            case 9:
+//                tvNum.setText("第九关");
+//                break;
+//            case 10:
+//                tvNum.setText("第十关");
+//                break;
+//        }
+            dialog.show();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(DELAYED);
+                        dialog.dismiss();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
     }
 
 
