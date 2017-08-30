@@ -38,6 +38,7 @@ public class MainActivity extends Activity {
     private static final int CLICK_NO = 0;
     private static final int CLICK_RIGHT = 1;
     private static final int CLICK_ERROR = -1;
+    private static final long DELAYED = 1000;
     @BindView(R.id.btn_top_back)
     ImageButton btnTopBack;
     @BindView(R.id.iv_left)
@@ -112,7 +113,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void run() {
                                 try {
-                                    Thread.sleep(1500);
+                                    Thread.sleep(DELAYED);
                                     Message message = handler.obtainMessage();
                                     handler.sendMessage(message);
                                 } catch (InterruptedException e) {
@@ -274,14 +275,13 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(DELAYED);
                     dialog.dismiss();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
-
     }
 
 
