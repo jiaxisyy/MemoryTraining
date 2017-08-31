@@ -20,6 +20,7 @@ public class SelectAdapter extends RecyclerView.Adapter {
     private List<Integer> numList;
     private OnMyItemClickListener onMyItemClickListener;
     private int isClick;
+    private int selectPosition;
 
     public void setOnMyItemClickListener(OnMyItemClickListener onMyItemClickListener) {
         this.onMyItemClickListener = onMyItemClickListener;
@@ -44,19 +45,25 @@ public class SelectAdapter extends RecyclerView.Adapter {
             if (isClick == 0) {//没有点击,默认状态
                 myViewHolder.tvItemNum.setText(numList.get(position).toString());
             } else if (isClick == 1) {// 正确
-                myViewHolder.tvItemNum.setVisibility(View.INVISIBLE);
-                myViewHolder.imageView.setVisibility(View.VISIBLE);
-                myViewHolder.imageView.setImageResource(R.drawable.iv_btn_right);
+                if (position == selectPosition) {
+                    myViewHolder.tvItemNum.setVisibility(View.INVISIBLE);
+                    myViewHolder.imageView.setVisibility(View.VISIBLE);
+                    myViewHolder.imageView.setImageResource(R.drawable.iv_btn_right);
+                }
+
             } else if (isClick == -1) {//错误
-                myViewHolder.tvItemNum.setVisibility(View.INVISIBLE);
-                myViewHolder.imageView.setVisibility(View.VISIBLE);
-                myViewHolder.imageView.setImageResource(R.drawable.iv_btn_error);
+                if(position == selectPosition){
+                    myViewHolder.tvItemNum.setVisibility(View.INVISIBLE);
+                    myViewHolder.imageView.setVisibility(View.VISIBLE);
+                    myViewHolder.imageView.setImageResource(R.drawable.iv_btn_error);
+                }
             }
         }
     }
 
-    public void afterClick(int isClick) {
+    public void afterClick(int isClick, int selectPosition) {
         this.isClick = isClick;
+        this.selectPosition = selectPosition;
         notifyDataSetChanged();
     }
 
