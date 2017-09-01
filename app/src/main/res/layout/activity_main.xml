@@ -16,27 +16,38 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="30px"
-            android:background="@drawable/btn_top_back" />
+            android:background="@drawable/btn_top_back"
+            android:cropToPadding="true"
+            android:padding="20px" />
 
         <ImageView
             android:id="@+id/iv_startGame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:cropToPadding="true"
+            android:padding="20px"
             android:src="@drawable/tv_word_memory_training" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_top_back"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/iv_topline" />
+
         <!--<TextView-->
-            <!--android:id="@+id/tv_top"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:paddingRight="20dp"-->
-            <!--android:text="排行榜"-->
-            <!--android:padding="20px"-->
-            <!--android:cropToPadding="true"-->
-            <!--android:textColor="#8E8C8C"-->
-            <!--android:textSize="16sp" />-->
+        <!--android:id="@+id/tv_top"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:paddingRight="20dp"-->
+        <!--android:text="排行榜"-->
+        <!--android:padding="20px"-->
+        <!--android:cropToPadding="true"-->
+        <!--android:textColor="#8E8C8C"-->
+        <!--android:textSize="16sp" />-->
 
     </RelativeLayout>
 
@@ -103,17 +114,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="00"
-                        android:visibility="invisible"
                         android:textColor="#F2BB8D"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:visibility="invisible" />
 
                     <TextView
-                        android:visibility="invisible"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="秒"
                         android:textColor="#F2BB8D"
-                        android:textSize="10sp" />
+                        android:textSize="10sp"
+                        android:visibility="invisible" />
 
                 </LinearLayout>
 

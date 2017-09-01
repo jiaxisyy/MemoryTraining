@@ -46,14 +46,14 @@ public class SelectAdapter extends RecyclerView.Adapter {
                 myViewHolder.tvItemNum.setText(numList.get(position).toString());
             } else if (isClick == 1) {// 正确
                 if (position == selectPosition) {
-                    myViewHolder.tvItemNum.setVisibility(View.INVISIBLE);
+                    myViewHolder.tvItemNum.setVisibility(View.GONE);
                     myViewHolder.imageView.setVisibility(View.VISIBLE);
                     myViewHolder.imageView.setImageResource(R.drawable.iv_btn_right);
                 }
 
             } else if (isClick == -1) {//错误
                 if(position == selectPosition){
-                    myViewHolder.tvItemNum.setVisibility(View.INVISIBLE);
+                    myViewHolder.tvItemNum.setVisibility(View.GONE);
                     myViewHolder.imageView.setVisibility(View.VISIBLE);
                     myViewHolder.imageView.setImageResource(R.drawable.iv_btn_error);
                 }
