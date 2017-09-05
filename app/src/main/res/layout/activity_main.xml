@@ -119,6 +119,7 @@
                         android:visibility="invisible" />
 
                     <TextView
+                        android:id="@+id/tv_secondWord"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="秒"
@@ -138,164 +139,22 @@
                 android:layout_below="@+id/ll_top"
                 android:background="#f0f0f0" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/tv_line"
-                android:orientation="vertical"
                 android:padding="10dp">
-
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_select"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
-
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0px"-->
-                <!--android:layout_weight="1"-->
-                <!--android:orientation="horizontal">-->
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="0px"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="1"-->
-                <!--android:gravity="center">-->
-
-                <!--<RelativeLayout-->
-                <!--android:id="@+id/rl_btn1"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="@drawable/bg_btn_select"-->
-                <!--android:gravity="center"-->
-                <!--android:textColor="#86DB72">-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/tv_btn_Num1"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="01"-->
-                <!--android:textColor="#86DB72" />-->
-
-                <!--<ImageView-->
-                <!--android:id="@+id/iv_btn_rightOrError1"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/iv_btn_error"-->
-                <!--android:visibility="invisible" />-->
-                <!--</RelativeLayout>-->
-
-                <!--</LinearLayout>-->
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="0px"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="1"-->
-                <!--android:gravity="center">-->
-
-                <!--<RelativeLayout-->
-                <!--android:id="@+id/rl_btn2"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="@drawable/bg_btn_select"-->
-                <!--android:gravity="center"-->
-                <!--android:textColor="#86DB72">-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/tv_btn_Num2"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="02"-->
-                <!--android:textColor="#86DB72" />-->
-
-                <!--<ImageView-->
-                <!--android:id="@+id/iv_btn_rightOrError2"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/iv_btn_error"-->
-                <!--android:visibility="invisible" />-->
-                <!--</RelativeLayout>-->
-
-                <!--</LinearLayout>-->
-
-
-                <!--</LinearLayout>-->
-
-                <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="1px"-->
-                <!--android:background="#f0f0f0" />-->
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0px"-->
-                <!--android:layout_weight="1"-->
-                <!--android:orientation="horizontal">-->
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="0px"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="1"-->
-                <!--android:gravity="center">-->
-
-                <!--<RelativeLayout-->
-                <!--android:id="@+id/rl_btn3"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="@drawable/bg_btn_select"-->
-                <!--android:gravity="center"-->
-                <!--android:textColor="#86DB72">-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/tv_btn_Num3"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="03"-->
-                <!--android:textColor="#86DB72" />-->
-
-                <!--<ImageView-->
-                <!--android:id="@+id/iv_btn_rightOrError3"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/iv_btn_error"-->
-                <!--android:visibility="invisible" />-->
-                <!--</RelativeLayout>-->
-
-                <!--</LinearLayout>-->
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="0px"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="1"-->
-                <!--android:gravity="center">-->
-
-                <!--<RelativeLayout-->
-                <!--android:id="@+id/rl_btn4"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="@drawable/bg_btn_select"-->
-                <!--android:gravity="center"-->
-                <!--android:textColor="#86DB72">-->
-                <!--<TextView-->
-                <!--android:id="@+id/tv_btn_Num4"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="04"-->
-                <!--android:textColor="#86DB72" />-->
-                <!--<ImageView-->
-                <!--android:id="@+id/iv_btn_rightOrError4"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/iv_btn_error"-->
-                <!--android:visibility="invisible" />-->
-                <!--</RelativeLayout>-->
-                <!--</LinearLayout>-->
-
-                <!--</LinearLayout>-->
-
-
-            </LinearLayout>
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="#f0f0f0" />
+            </RelativeLayout>
 
 
         </RelativeLayout>

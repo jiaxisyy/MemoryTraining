@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_btn_select"
@@ -27,6 +28,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/iv_btn_error"
             android:visibility="gone" />
+
 
     </RelativeLayout>
 

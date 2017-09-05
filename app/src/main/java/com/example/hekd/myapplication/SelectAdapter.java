@@ -43,7 +43,12 @@ public class SelectAdapter extends RecyclerView.Adapter {
         MyViewHolder myViewHolder = (MyViewHolder) holder;
         if (numList.size() != 0) {
             if (isClick == 0) {//没有点击,默认状态
-                myViewHolder.tvItemNum.setText(numList.get(position).toString());
+                if((numList.get(position).toString()).length()==1){
+                    myViewHolder.tvItemNum.setText("0"+numList.get(position).toString());
+                }else {
+                    myViewHolder.tvItemNum.setText(numList.get(position).toString());
+                }
+
             } else if (isClick == 1) {// 正确
                 if (position == selectPosition) {
                     myViewHolder.tvItemNum.setVisibility(View.GONE);
