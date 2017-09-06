@@ -60,11 +60,12 @@ import static android.R.id.list;
 
 public class MainActivity extends Activity {
 
+    private static final long ANIMATIONTIME = 500;
     private static int MAXNUM = 20;
     private static final int CLICK_NO = 0;
     private static final int CLICK_RIGHT = 1;
     private static final int CLICK_ERROR = -1;
-    private static final long DELAYED = 500;
+    private static final long DELAYED = 300;
     private static final long SECONDDOWNTIME_LONG = 1000;
     @BindView(R.id.btn_top_back)
     ImageButton btnTopBack;
@@ -87,11 +88,7 @@ public class MainActivity extends Activity {
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-
-                init();
-
-
-
+            init();
             return false;
         }
     });
@@ -125,6 +122,7 @@ public class MainActivity extends Activity {
     private int SECONDDOWNTIME = 15;//倒计时时间
     private CompositeDisposable cd = new CompositeDisposable();
     private boolean isResetSecondDown = true;//是否重置倒计时
+    private Disposable disposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +175,9 @@ public class MainActivity extends Activity {
         super.onDestroy();
         unbindService(connection);
         stopService(intent);
+        if (!cd.isDisposed()) {
+            cd.dispose();
+        }
     }
 
     private void init() {
@@ -186,8 +187,10 @@ public class MainActivity extends Activity {
 //        int customs_num = CacheUtils.getInt(MainActivity.this, "customs_num", 1);//获取保存关卡
         //获取总的关卡数
         customs_num_all = CacheUtils.getInt(MainActivity.this, "customs_num_all", 1);
+//        //模拟15关
+//        customs_num_all = 15;
         if (customs_num_all == 1) {
-            MAXNUM = 5;
+            MAXNUM = 10;
         } else if (customs_num_all == 2) {
             MAXNUM = 15;
         } else if (customs_num_all == 3) {
@@ -228,10 +231,16 @@ public class MainActivity extends Activity {
         }
 
         Log.d("TAG", "integers=" + integers.toString());
-        leftPicNum = showRandomPic(integers.get(count - 1));
+
+        if (customs_num_all >= 15) {
+            //取前三十个数
+            List<Integer> integerFor30 = integers.subList(0, 30);
+            leftPicNum = showRandomPic(integerFor30.get(count - 1));
+        } else {
+            leftPicNum = showRandomPic(integers.get(count - 1));
+        }
         //********************************************
         //限时30个数字
-
 
         List<Integer> numList = new ArrayList<>();
         numList.add(leftPicNum);
@@ -246,6 +255,7 @@ public class MainActivity extends Activity {
             if (numList.size() == 4) flag = false;
         }
         Collections.shuffle(numList);//打乱集合
+
         showRight(numList, leftPicNum);
 
 
@@ -264,10 +274,10 @@ public class MainActivity extends Activity {
             } else if (customs_num_all == 20) {
                 SECONDDOWNTIME = 30;
             }
-        }
-        if (isResetSecondDown) {
-            startCountDown(SECONDDOWNTIME);
-            isResetSecondDown = false;
+            if (isResetSecondDown) {
+                startCountDown(SECONDDOWNTIME);
+                isResetSecondDown = false;
+            }
         }
     }
 
@@ -279,56 +289,44 @@ public class MainActivity extends Activity {
         tvSecondNum.setVisibility(View.VISIBLE);
         tvSecondWord.setVisibility(View.VISIBLE);
         Log.d("TAG", "startCountDown");
-
-        Observable.interval(0, 1, TimeUnit.SECONDS).take(second + 1).map(new Function<Long, Long>() {
+//        secondDownForJava();
+        Observable<Long> observable = Observable.interval(0, 1, TimeUnit.SECONDS).take(second + 1).map(new Function<Long, Long>() {
             @Override
             public Long apply(@NonNull Long aLong) throws Exception {
 
                 return second - aLong;// 由于是倒计时，需要将倒计时的数字反过来
             }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.newThread()).subscribe(new Observer<Long>() {
+        }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.newThread());
+        observable.subscribe(getObserver());
+
+    }
+
+    private Observer getObserver() {
+        Observer<Long> longObserver = new Observer<Long>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-                cd.add(d);
+//                cd.add(d);
+                disposable = d;
             }
+
             @Override
-            public void onNext(@NonNull Long aLong) {
-                tvSecondNum.setText(aLong.toString());
-                Log.d("TAG", aLong.toString());
+            public void onNext(@NonNull Long o) {
+                tvSecondNum.setText(o + "");
             }
+
             @Override
             public void onError(@NonNull Throwable e) {
 
             }
+
             @Override
             public void onComplete() {
-                if(!cd.isDisposed()){
-                    showDialogReminder();
-//                    cd.dispose();
-                }
+                showDialogReminder();
             }
-        });
-
+        };
+        return longObserver;
     }
 
-    private void fun1() {
-        List<Integer> integers = new ArrayList<>();
-
-        for (int i = 1; i <= MAXNUM; i++) {
-            integers.add(i);
-        }
-
-        while (flag) {
-            if (showAfterNum.contains(leftPicNum)) {//重新取值
-                leftPicNum = showRandomPic(MAXNUM);
-                Log.d("TAG", "leftPicNum1=" + leftPicNum + "");
-            } else {
-                flag = false;
-                showAfterNum.add(leftPicNum);
-                Log.d("TAG", showAfterNum.toString());
-            }
-        }
-    }
 
     private void showRight(final List<Integer> list, final int leftNum) {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
@@ -348,6 +346,9 @@ public class MainActivity extends Activity {
                             count++;
                             adapter.afterClick(CLICK_RIGHT, position);
                             int customs_num = CacheUtils.getInt(MainActivity.this, "customs_num", 1);//获取保存关卡
+                            if (customs_num_all >= 15) {
+                                MAXNUM = 30;
+                            }
                             if (customs_num == MAXNUM) {
                                 if (customs_num_all == 20) {
                                     pass();
@@ -359,6 +360,9 @@ public class MainActivity extends Activity {
                                     integers.clear();
                                     //下一关
 //                                    cd.dispose();
+                                    if(disposable!=null){
+                                        disposable.dispose();
+                                    }
                                     isResetSecondDown = true;
                                 }
                             } else {
@@ -368,7 +372,7 @@ public class MainActivity extends Activity {
                                 @Override
                                 public void run() {
                                     try {
-                                        Thread.sleep(DELAYED);
+                                        Thread.sleep(0);
                                         Message message = handler.obtainMessage();
                                         handler.sendMessage(message);
                                     } catch (InterruptedException e) {
@@ -416,7 +420,7 @@ public class MainActivity extends Activity {
         int id = getResources().getIdentifier("pic" + picNum, "drawable", getPackageName());
         ivLeft.setImageResource(id);
         Animation operatingAnim = AnimationUtils.loadAnimation(this, R.anim.pic_in);
-        operatingAnim.setDuration(1000);
+        operatingAnim.setDuration(ANIMATIONTIME);
         LinearInterpolator lin = new LinearInterpolator();
         operatingAnim.setInterpolator(lin);
         if (operatingAnim != null) {
@@ -484,6 +488,9 @@ public class MainActivity extends Activity {
      * 提示弹窗
      */
     private void showDialogReminder() {
+        if(disposable!=null){
+            disposable.dispose();//取消订阅
+        }
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_reminder, null, false);
         final Dialog dialog = new Dialog(this, R.style.input_dialog);
         dialog.setCancelable(false);
@@ -495,13 +502,12 @@ public class MainActivity extends Activity {
         btn_dialogSure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                cd.dispose();
                 isResetSecondDown = true;//重置倒计时
                 dialog.dismiss();
                 init();
             }
         });
-
-
     }
 
     /**
