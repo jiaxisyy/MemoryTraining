@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
     private static final int CLICK_NO = 0;
     private static final int CLICK_RIGHT = 1;
     private static final int CLICK_ERROR = -1;
-    private static final long DELAYED = 300;
+    private static final long DELAYED = 1000;
     private static final long SECONDDOWNTIME_LONG = 1000;
     @BindView(R.id.btn_top_back)
     ImageButton btnTopBack;
