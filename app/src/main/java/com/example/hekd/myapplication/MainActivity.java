@@ -61,11 +61,14 @@ import static android.R.id.list;
 public class MainActivity extends Activity {
 
     private static final long ANIMATIONTIME = 500;
+    private static final String APP_VERSIONCODE = "app_versioncode";
+    private static final String CUSTOMS_NUM = "customs_num";
+    private static final String CUSTOMS_NUM_ALL = "customs_num_all";
     private static int MAXNUM = 20;
     private static final int CLICK_NO = 0;
     private static final int CLICK_RIGHT = 1;
     private static final int CLICK_ERROR = -1;
-    private static final long DELAYED = 1000;
+    private static final long DELAYED = 1500;
     private static final long SECONDDOWNTIME_LONG = 1000;
     @BindView(R.id.btn_top_back)
     ImageButton btnTopBack;
@@ -134,8 +137,23 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        checkVersionCode();
         init();
         addBGM();
+    }
+
+    /**
+     * 检查版本号,确认是否需要重置关卡
+     */
+    private void checkVersionCode() {
+        int versionCode = Utils.getVersionCode(this);
+        int localVersionCode = CacheUtils.getInt(this, APP_VERSIONCODE,1);
+        if (versionCode > localVersionCode) {//重置
+            CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
+            CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM_ALL, 1);
+            CacheUtils.putInt(this,APP_VERSIONCODE,versionCode);
+        }
     }
 
 
@@ -186,7 +204,7 @@ public class MainActivity extends Activity {
         showCustoms();
 //        int customs_num = CacheUtils.getInt(MainActivity.this, "customs_num", 1);//获取保存关卡
         //获取总的关卡数
-        customs_num_all = CacheUtils.getInt(MainActivity.this, "customs_num_all", 1);
+        customs_num_all = CacheUtils.getInt(MainActivity.this, CUSTOMS_NUM_ALL, 1);
 //        //模拟15关
 //        customs_num_all = 15;
         if (customs_num_all == 1) {
@@ -345,7 +363,7 @@ public class MainActivity extends Activity {
                             flag = true;
                             count++;
                             adapter.afterClick(CLICK_RIGHT, position);
-                            int customs_num = CacheUtils.getInt(MainActivity.this, "customs_num", 1);//获取保存关卡
+                            int customs_num = CacheUtils.getInt(MainActivity.this, CUSTOMS_NUM, 1);//获取保存关卡
                             if (customs_num_all >= 15) {
                                 MAXNUM = 30;
                             }
@@ -353,20 +371,20 @@ public class MainActivity extends Activity {
                                 if (customs_num_all == 20) {
                                     pass();
                                 } else {
-                                    CacheUtils.putInt(MainActivity.this, "customs_num_all", customs_num_all + 1);//保存关卡
-                                    CacheUtils.putInt(MainActivity.this, "customs_num", 1);//保存关卡
+                                    CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM_ALL, customs_num_all + 1);//保存关卡
+                                    CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);//保存关卡
                                     count = 1;
                                     isShuffle = true;
                                     integers.clear();
                                     //下一关
 //                                    cd.dispose();
-                                    if(disposable!=null){
+                                    if (disposable != null) {
                                         disposable.dispose();
                                     }
                                     isResetSecondDown = true;
                                 }
                             } else {
-                                CacheUtils.putInt(MainActivity.this, "customs_num", customs_num + 1);//保存关卡
+                                CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, customs_num + 1);//保存关卡
                             }
                             new Thread(new Runnable() {
                                 @Override
@@ -386,7 +404,7 @@ public class MainActivity extends Activity {
                             count = 1;
                             adapter.afterClick(CLICK_ERROR, position);
                             showDialogReminder();
-                            CacheUtils.putInt(MainActivity.this, "customs_num", 1);
+                            CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
                             integers.clear();
                         }
                     }
@@ -434,7 +452,7 @@ public class MainActivity extends Activity {
      * 显示关卡数
      */
     private void showCustoms() {
-        int customs_num_all = CacheUtils.getInt(MainActivity.this, "customs_num_all", 1);//获取保存关卡
+        int customs_num_all = CacheUtils.getInt(MainActivity.this, CUSTOMS_NUM_ALL, 1);//获取保存关卡
 //        if (customs_num_all == 21) {
 //            CustomToast.showToast(this, "恭喜你已通关,游戏重置", Toast.LENGTH_SHORT);
 //            reset();
@@ -488,7 +506,7 @@ public class MainActivity extends Activity {
      * 提示弹窗
      */
     private void showDialogReminder() {
-        if(disposable!=null){
+        if (disposable != null) {
             disposable.dispose();//取消订阅
         }
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_reminder, null, false);
@@ -515,7 +533,7 @@ public class MainActivity extends Activity {
      */
     private void showDialogCustoms(int customsNnum) {
 
-        int customs_num = CacheUtils.getInt(MainActivity.this, "customs_num", 1);//获取保存关卡
+        int customs_num = CacheUtils.getInt(MainActivity.this, CUSTOMS_NUM, 1);//获取保存关卡
         if (customs_num == 1) {
             View view = LayoutInflater.from(this).inflate(R.layout.dialog_customs, null, false);
             final Dialog dialog = new Dialog(this, R.style.input_dialog);
@@ -603,8 +621,8 @@ public class MainActivity extends Activity {
     }
 
     private void reset() {
-        CacheUtils.putInt(MainActivity.this, "customs_num", 1);
-        CacheUtils.putInt(MainActivity.this, "customs_num_all", 1);
+        CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
+        CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM_ALL, 1);
         count = 1;
         isShuffle = true;
         integers.clear();
