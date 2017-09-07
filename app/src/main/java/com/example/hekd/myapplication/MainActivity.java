@@ -244,6 +244,9 @@ public class MainActivity extends Activity {
             for (int i = 1; i <= MAXNUM; i++) {
                 integers.add(i);
             }
+            if(customs_num_all>=14){//大于十四关加入0
+                integers.add(0);
+            }
             Collections.shuffle(integers);//打乱集合
             isShuffle = false;
         }
@@ -268,7 +271,9 @@ public class MainActivity extends Activity {
         while (flag) {
             int otherNum = random.nextInt(MAXNUM);
             if (!numList.contains(otherNum) && numList.size() != 4) {
-                numList.add(otherNum);
+                if(otherNum!=0){//右边不出现0
+                    numList.add(otherNum);
+                }
             }
             if (numList.size() == 4) flag = false;
         }
@@ -619,6 +624,7 @@ public class MainActivity extends Activity {
         CustomToast.showToast(this, "游戏关卡已重置", Toast.LENGTH_SHORT);
         return false;
     }
+
 
     private void reset() {
         CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
