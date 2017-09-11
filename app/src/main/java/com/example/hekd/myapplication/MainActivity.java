@@ -8,14 +8,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,10 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -48,15 +41,12 @@ import butterknife.OnClick;
 import butterknife.OnLongClick;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-
-import static android.R.id.list;
 
 public class MainActivity extends Activity {
 
@@ -91,7 +81,17 @@ public class MainActivity extends Activity {
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            init();
+
+            if (msg.what == 99) {
+                if (isResetSecondDown) {
+                    startCountDown(SECONDDOWNTIME);
+                    isResetSecondDown = false;
+                }
+            } else {
+
+
+                init();
+            }
             return false;
         }
     });
@@ -126,6 +126,8 @@ public class MainActivity extends Activity {
     private CompositeDisposable cd = new CompositeDisposable();
     private boolean isResetSecondDown = true;//是否重置倒计时
     private Disposable disposable;
+    private Dialog dialog_Custims;
+    private int TESTTIME = 50;//添加的测试时间
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,15 +149,17 @@ public class MainActivity extends Activity {
      * 检查版本号,确认是否需要重置关卡
      */
     private void checkVersionCode() {
+        //模拟15关
+        CacheUtils.putInt(this, CUSTOMS_NUM_ALL, 20);
+
         int versionCode = Utils.getVersionCode(this);
-        int localVersionCode = CacheUtils.getInt(this, APP_VERSIONCODE,1);
+        int localVersionCode = CacheUtils.getInt(this, APP_VERSIONCODE, 1);
         if (versionCode > localVersionCode) {//重置
             CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
             CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM_ALL, 1);
-            CacheUtils.putInt(this,APP_VERSIONCODE,versionCode);
+            CacheUtils.putInt(this, APP_VERSIONCODE, versionCode);
         }
     }
-
 
     /**
      * 添加背景音乐
@@ -200,12 +204,11 @@ public class MainActivity extends Activity {
 
     private void init() {
 
-
         showCustoms();
 //        int customs_num = CacheUtils.getInt(MainActivity.this, "customs_num", 1);//获取保存关卡
         //获取总的关卡数
         customs_num_all = CacheUtils.getInt(MainActivity.this, CUSTOMS_NUM_ALL, 1);
-//        //模拟15关
+
 //        customs_num_all = 15;
         if (customs_num_all == 1) {
             MAXNUM = 10;
@@ -244,7 +247,7 @@ public class MainActivity extends Activity {
             for (int i = 1; i <= MAXNUM; i++) {
                 integers.add(i);
             }
-            if(customs_num_all>=14){//大于十四关加入0
+            if (customs_num_all >= 14) {//大于十四关加入0
                 integers.add(0);
             }
             Collections.shuffle(integers);//打乱集合
@@ -262,7 +265,6 @@ public class MainActivity extends Activity {
         }
         //********************************************
         //限时30个数字
-
         List<Integer> numList = new ArrayList<>();
         numList.add(leftPicNum);
         Log.d("TAG", "leftPicNum2=" + leftPicNum + "");
@@ -271,7 +273,7 @@ public class MainActivity extends Activity {
         while (flag) {
             int otherNum = random.nextInt(MAXNUM);
             if (!numList.contains(otherNum) && numList.size() != 4) {
-                if(otherNum!=0){//右边不出现0
+                if (otherNum != 0) {//右边不出现0
                     numList.add(otherNum);
                 }
             }
@@ -285,22 +287,37 @@ public class MainActivity extends Activity {
         //开始限时
         if (customs_num_all >= 15) {
             if (customs_num_all == 15) {
-                SECONDDOWNTIME = 60;
+                SECONDDOWNTIME = 60 + TESTTIME;
             } else if (customs_num_all == 16) {
-                SECONDDOWNTIME = 55;
+                SECONDDOWNTIME = 55 + TESTTIME;
             } else if (customs_num_all == 17) {
-                SECONDDOWNTIME = 45;
+                SECONDDOWNTIME = 45 + TESTTIME;
             } else if (customs_num_all == 18) {
-                SECONDDOWNTIME = 40;
+                SECONDDOWNTIME = 40 + TESTTIME;
             } else if (customs_num_all == 19) {
-                SECONDDOWNTIME = 35;
+                SECONDDOWNTIME = 35 + TESTTIME;
             } else if (customs_num_all == 20) {
-                SECONDDOWNTIME = 30;
+                SECONDDOWNTIME = 30 + TESTTIME;
             }
-            if (isResetSecondDown) {
-                startCountDown(SECONDDOWNTIME);
-                isResetSecondDown = false;
-            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+                        Message obtain = Message.obtain();
+                        obtain.what = 99;
+
+                        handler.sendMessage(obtain);
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+//            if (isResetSecondDown) {
+//                startCountDown(SECONDDOWNTIME);
+//                isResetSecondDown = false;
+//            }
         }
     }
 
@@ -320,21 +337,27 @@ public class MainActivity extends Activity {
                 return second - aLong;// 由于是倒计时，需要将倒计时的数字反过来
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.newThread());
-        observable.subscribe(getObserver());
+        Observer observer = getObserver();
 
+
+        if (disposable != null) {
+            disposable.dispose();
+        }
+        observable.subscribe(observer);
     }
 
     private Observer getObserver() {
         Observer<Long> longObserver = new Observer<Long>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-//                cd.add(d);
+                cd.add(d);
                 disposable = d;
             }
 
             @Override
             public void onNext(@NonNull Long o) {
                 tvSecondNum.setText(o + "");
+                Log.d("TAG", "onNext =====================");
             }
 
             @Override
@@ -344,7 +367,12 @@ public class MainActivity extends Activity {
 
             @Override
             public void onComplete() {
+                isShuffle = true;
+                count = 1;
+                CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
+                integers.clear();
                 showDialogReminder();
+
             }
         };
         return longObserver;
@@ -369,12 +397,20 @@ public class MainActivity extends Activity {
                             count++;
                             adapter.afterClick(CLICK_RIGHT, position);
                             int customs_num = CacheUtils.getInt(MainActivity.this, CUSTOMS_NUM, 1);//获取保存关卡
+                            Log.d("TAG", "customs_num=" + customs_num);
+                            Log.d("TAG", "customs_num_all=" + customs_num_all);
                             if (customs_num_all >= 15) {
-                                MAXNUM = 30;
+//                                MAXNUM = 30;
+                                MAXNUM = 5;//test
+
                             }
+                            Log.d("TAG", "MAXNUM  >=15  =" + MAXNUM);
                             if (customs_num == MAXNUM) {
                                 if (customs_num_all == 20) {
+
                                     pass();
+
+
                                 } else {
                                     CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM_ALL, customs_num_all + 1);//保存关卡
                                     CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);//保存关卡
@@ -407,10 +443,11 @@ public class MainActivity extends Activity {
                         } else {
                             isShuffle = true;
                             count = 1;
-                            adapter.afterClick(CLICK_ERROR, position);
-                            showDialogReminder();
                             CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
                             integers.clear();
+                            adapter.afterClick(CLICK_ERROR, position);
+                            showDialogReminder();
+
                         }
                     }
                 }
@@ -427,7 +464,17 @@ public class MainActivity extends Activity {
      */
     private void pass() {
         CustomToast.showToast(this, "恭喜你已通关,游戏重置", Toast.LENGTH_SHORT);
-        reset();
+        CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
+        CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM_ALL, 1);
+        count = 1;
+        isShuffle = true;
+        integers.clear();
+        isResetSecondDown = true;
+        if (cd != null && customs_num_all == 20) {
+            cd.dispose();
+            tvSecondNum.setVisibility(View.INVISIBLE);
+            tvSecondWord.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -513,21 +560,31 @@ public class MainActivity extends Activity {
     private void showDialogReminder() {
         if (disposable != null) {
             disposable.dispose();//取消订阅
+//            cd.dispose();
+            Log.d("TAG", "showDialogReminder->取消订阅");
         }
+        Log.d("TAG", "showDialogReminder");
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_reminder, null, false);
-        final Dialog dialog = new Dialog(this, R.style.input_dialog);
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setContentView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
-        dialog.show();
+        final Dialog dialog_Reminder = new Dialog(this, R.style.input_dialog);
+        dialog_Reminder.setCancelable(false);
+        dialog_Reminder.setCanceledOnTouchOutside(false);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        dialog_Reminder.setContentView(view, params);
+
+        if (!isFinishing()) {
+            dialog_Reminder.show();
+        }
         Button btn_dialogSure = (Button) view.findViewById(R.id.btn_dialog_sure);
         btn_dialogSure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                cd.dispose();
                 isResetSecondDown = true;//重置倒计时
-                dialog.dismiss();
+                if (dialog_Reminder != null && dialog_Reminder.isShowing()) {
+                    dialog_Reminder.dismiss();
+                }
                 init();
             }
         });
@@ -541,10 +598,10 @@ public class MainActivity extends Activity {
         int customs_num = CacheUtils.getInt(MainActivity.this, CUSTOMS_NUM, 1);//获取保存关卡
         if (customs_num == 1) {
             View view = LayoutInflater.from(this).inflate(R.layout.dialog_customs, null, false);
-            final Dialog dialog = new Dialog(this, R.style.input_dialog);
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.setContentView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+            dialog_Custims = new Dialog(this, R.style.input_dialog);
+            dialog_Custims.setCancelable(false);
+            dialog_Custims.setCanceledOnTouchOutside(true);
+            dialog_Custims.setContentView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT));
             TextView tvNum = (TextView) view.findViewById(R.id.tv_dialog_customsNum);
             if (customsNnum == 1) {
@@ -590,14 +647,17 @@ public class MainActivity extends Activity {
             }
 
 
-            dialog.show();
-
+            if (!isFinishing()) {
+                dialog_Custims.show();
+            }
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Thread.sleep(DELAYED);
-                        dialog.dismiss();
+                        if (dialog_Custims != null && dialog_Custims.isShowing()) {
+                            dialog_Custims.dismiss();
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -605,13 +665,13 @@ public class MainActivity extends Activity {
             }).start();
         }
 
-
     }
 
 
     @OnClick(R.id.btn_top_back)
     public void onViewClicked() {
-        finish();
+//        finish();
+        pass();
     }
 
 
@@ -633,6 +693,11 @@ public class MainActivity extends Activity {
         isShuffle = true;
         integers.clear();
         isResetSecondDown = true;
+        if (cd != null && customs_num_all == 20) {
+            cd.dispose();
+            tvSecondNum.setVisibility(View.INVISIBLE);
+            tvSecondWord.setVisibility(View.INVISIBLE);
+        }
         init();
     }
 
