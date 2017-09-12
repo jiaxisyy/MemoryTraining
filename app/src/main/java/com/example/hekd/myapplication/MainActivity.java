@@ -127,7 +127,10 @@ public class MainActivity extends Activity {
     private boolean isResetSecondDown = true;//是否重置倒计时
     private Disposable disposable;
     private Dialog dialog_Custims;
-    private int TESTTIME = 50;//添加的测试时间
+    private int TESTTIME = 0;//添加的测试时间
+    private View view;
+    private boolean isPass = false;//默认没有通关
+    private boolean isTest = false;//是否测试
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,9 +152,10 @@ public class MainActivity extends Activity {
      * 检查版本号,确认是否需要重置关卡
      */
     private void checkVersionCode() {
-        //模拟15关
-        CacheUtils.putInt(this, CUSTOMS_NUM_ALL, 20);
-
+        //模拟20关
+        if(isTest){
+            CacheUtils.putInt(this, CUSTOMS_NUM_ALL, 20);
+        }
         int versionCode = Utils.getVersionCode(this);
         int localVersionCode = CacheUtils.getInt(this, APP_VERSIONCODE, 1);
         if (versionCode > localVersionCode) {//重置
@@ -184,8 +188,8 @@ public class MainActivity extends Activity {
 
     private void playSound() {
         soundPool.play(soundID,
-                0.1f,   //左耳道音量【0~1】
-                0.1f,   //右耳道音量【0~1】
+                0.3f,   //左耳道音量【0~1】
+                0.3f,   //右耳道音量【0~1】
                 0,     //播放优先级【0表示最低优先级】
                 1,     //循环模式【0表示循环一次，-1表示一直循环，其他表示数字+1表示当前数字对应的循环次数】
                 1     //播放速度【1是正常，范围从0~2】
@@ -204,6 +208,7 @@ public class MainActivity extends Activity {
 
     private void init() {
 
+        isPass=false;
         showCustoms();
 //        int customs_num = CacheUtils.getInt(MainActivity.this, "customs_num", 1);//获取保存关卡
         //获取总的关卡数
@@ -400,17 +405,17 @@ public class MainActivity extends Activity {
                             Log.d("TAG", "customs_num=" + customs_num);
                             Log.d("TAG", "customs_num_all=" + customs_num_all);
                             if (customs_num_all >= 15) {
-//                                MAXNUM = 30;
-                                MAXNUM = 5;//test
-
+                                if (isTest) {
+                                    MAXNUM = 5;//test
+                                } else {
+                                    MAXNUM = 30;
+                                }
                             }
                             Log.d("TAG", "MAXNUM  >=15  =" + MAXNUM);
                             if (customs_num == MAXNUM) {
                                 if (customs_num_all == 20) {
-
                                     pass();
-
-
+                                    isPass = true;
                                 } else {
                                     CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM_ALL, customs_num_all + 1);//保存关卡
                                     CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);//保存关卡
@@ -427,18 +432,20 @@ public class MainActivity extends Activity {
                             } else {
                                 CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, customs_num + 1);//保存关卡
                             }
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        Thread.sleep(0);
-                                        Message message = handler.obtainMessage();
-                                        handler.sendMessage(message);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                            if (!isPass) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(0);
+                                            Message message = handler.obtainMessage();
+                                            handler.sendMessage(message);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
-                                }
-                            }).start();
+                                }).start();
+                            }
 
                         } else {
                             isShuffle = true;
@@ -463,18 +470,48 @@ public class MainActivity extends Activity {
      * 通关
      */
     private void pass() {
-        CustomToast.showToast(this, "恭喜你已通关,游戏重置", Toast.LENGTH_SHORT);
+//        CustomToast.showToast(this, "恭喜你已通关,游戏重置", Toast.LENGTH_SHORT);
         CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM, 1);
         CacheUtils.putInt(MainActivity.this, CUSTOMS_NUM_ALL, 1);
         count = 1;
         isShuffle = true;
         integers.clear();
+        isPass = false;
         isResetSecondDown = true;
         if (cd != null && customs_num_all == 20) {
             cd.dispose();
             tvSecondNum.setVisibility(View.INVISIBLE);
             tvSecondWord.setVisibility(View.INVISIBLE);
         }
+        View viewPass = LayoutInflater.from(this).inflate(R.layout.dialog_reminder, null, false);
+        final Dialog dialog_ReminderPass = new Dialog(this, R.style.input_dialog);
+        dialog_ReminderPass.setCancelable(false);
+        dialog_ReminderPass.setCanceledOnTouchOutside(false);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        dialog_ReminderPass.setContentView(viewPass, params);
+        TextView passReminderInfo = (TextView) viewPass.findViewById(R.id.tv_dialog_reminderInfo);
+        passReminderInfo.setText(R.string.dialog_pass_message);
+
+        if (!isFinishing()) {
+            dialog_ReminderPass.show();
+        }
+        Button btn_dialogSure = (Button) viewPass.findViewById(R.id.btn_dialog_sure);
+        btn_dialogSure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                cd.dispose();
+                isResetSecondDown = true;//重置倒计时
+                if (dialog_ReminderPass != null && dialog_ReminderPass.isShowing()) {
+                    dialog_ReminderPass.dismiss();
+                    init();
+                }
+
+            }
+        });
+
+
     }
 
     /**
@@ -670,8 +707,8 @@ public class MainActivity extends Activity {
 
     @OnClick(R.id.btn_top_back)
     public void onViewClicked() {
-//        finish();
-        pass();
+        finish();
+//        pass();
     }
 
 
@@ -680,8 +717,8 @@ public class MainActivity extends Activity {
 //        CustomToast.showToast(this, "游戏开始", Toast.LENGTH_SHORT);
 //        init();
         //复位
-        reset();
-        CustomToast.showToast(this, "游戏关卡已重置", Toast.LENGTH_SHORT);
+//        reset();
+//        CustomToast.showToast(this, "游戏已重新开始", Toast.LENGTH_SHORT);
         return false;
     }
 
@@ -698,6 +735,7 @@ public class MainActivity extends Activity {
             tvSecondNum.setVisibility(View.INVISIBLE);
             tvSecondWord.setVisibility(View.INVISIBLE);
         }
+        isPass = false;
         init();
     }
 

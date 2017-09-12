@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">记忆训练</string>
+    <string name="dialog_pass_message">恭喜你已通关,点击确认重置游戏</string>
 </resources>
